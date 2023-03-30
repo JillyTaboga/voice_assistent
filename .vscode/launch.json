@@ -8,6 +8,7 @@
             "name": "voice_assistent",
             "request": "launch",
             "type": "dart",
+            "args": []
         },
         {
             "name": "voice_assistent (profile mode)",
