@@ -1,4 +1,4 @@
-package com.example.voice_assistent
+package com.jilly.voice_assistent
 
 import io.flutter.embedding.android.FlutterActivity
 
