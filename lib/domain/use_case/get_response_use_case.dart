@@ -7,9 +7,9 @@ part 'get_response_use_case.g.dart';
 
 @riverpod
 Future<ChatEntry> getResponseUseCase(
-    GetResponseUseCaseRef ref, String message) async {
+    GetResponseUseCaseRef ref, List<ChatEntry> entries) async {
   final ds = ref.watch(chatApi);
-  final response = await ds.getResponse(message);
+  final response = await ds.getResponse(entries);
   return ChatEntry(
     createdTime: DateTime.now(),
     origin: ChatOrigem.assistent,

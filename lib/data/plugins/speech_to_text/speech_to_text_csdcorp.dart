@@ -11,10 +11,13 @@ class SpeechToTextCsdCorp implements SpeechToText {
   }
 
   @override
-  void startListen(Function(String read) onRead) {
+  void startListen(Function(String read) onRead, Function() onDone) {
     _speechToText.listen(
       onResult: (result) {
         onRead(result.recognizedWords);
+        if (result.finalResult) {
+          onDone();
+        }
       },
     );
   }

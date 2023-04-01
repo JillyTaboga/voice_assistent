@@ -9,31 +9,58 @@ import 'controllers/speech_to_text_controller.dart';
 class SpeechReadScreen extends ConsumerWidget {
   const SpeechReadScreen({super.key});
 
+  onStartRecording(WidgetRef ref) async {
+    ref.read(speechToText).startListen(
+      ref.read(textReadedProviderProvider.notifier).setText,
+      () {
+        onStopRecording(ref);
+      },
+    );
+    ref.read(isRecordingProvider.notifier).change();
+  }
+
+  onStopRecording(WidgetRef ref) async {
+    ref.read(isRecordingProvider.notifier).change();
+    ref.read(speechToText).stop();
+    ref.read(chatListProvider.notifier).addBubble(
+          ChatEntry(
+            createdTime: DateTime.now(),
+            origin: ChatOrigem.user,
+            content: ref.read(textReadedProviderProvider),
+          ),
+        );
+    ref.read(textReadedProviderProvider.notifier).clear();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chatList = ref.watch(chatListProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Assistente de voz'),
+        title: const Text('ChatGpt de voz'),
         centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Stack(
           children: [
-            Column(
-              children: [
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 250),
-                  child: ref.watch(chatLoadingProvider)
-                      ? const Center(child: CircularProgressIndicator())
-                      : Container(),
+            CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    child: ref.watch(chatLoadingProvider)
+                        ? const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : Container(),
+                  ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    itemCount: chatList.length,
-                    itemBuilder: (_, index) {
+                const SliverPadding(padding: EdgeInsets.all(8)),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) {
                       final chatEntry = chatList[index];
                       final isUser = chatEntry.origin == ChatOrigem.user;
                       final color = isUser ? Colors.green : Colors.blue;
@@ -54,6 +81,7 @@ class SpeechReadScreen extends ConsumerWidget {
                         ),
                       );
                     },
+                    childCount: chatList.length,
                   ),
                 ),
               ],
@@ -66,7 +94,7 @@ class SpeechReadScreen extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.2),
+                    color: Theme.of(context).primaryColor,
                     border: Border.all(
                       width: 1,
                       color: Theme.of(context).primaryColor,
@@ -76,6 +104,7 @@ class SpeechReadScreen extends ConsumerWidget {
                   child: Text(
                     ref.watch(textReadedProviderProvider),
                     textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -88,22 +117,10 @@ class SpeechReadScreen extends ConsumerWidget {
               onPressed: data
                   ? ref.watch(isRecordingProvider)
                       ? () {
-                          ref.read(isRecordingProvider.notifier).change();
-                          ref.read(speechToText).stop();
-                          ref.read(chatListProvider.notifier).addBubble(
-                                ChatEntry(
-                                  createdTime: DateTime.now(),
-                                  origin: ChatOrigem.user,
-                                  content: ref.read(textReadedProviderProvider),
-                                ),
-                              );
-                          ref.read(textReadedProviderProvider.notifier).clear();
+                          onStopRecording(ref);
                         }
                       : () {
-                          ref.read(speechToText).startListen(ref
-                              .read(textReadedProviderProvider.notifier)
-                              .setText);
-                          ref.read(isRecordingProvider.notifier).change();
+                          onStartRecording(ref);
                         }
                   : null,
               child: data

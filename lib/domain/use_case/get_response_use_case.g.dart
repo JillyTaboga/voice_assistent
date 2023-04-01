@@ -7,7 +7,7 @@ part of 'get_response_use_case.dart';
 // **************************************************************************
 
 String _$getResponseUseCaseHash() =>
-    r'78427bd99e947651d8de9f18547048d1f7f20c0a';
+    r'936e6c32e34eb52f8de670e31a4822299a67bfc8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,10 +43,10 @@ class GetResponseUseCaseFamily extends Family<AsyncValue<ChatEntry>> {
 
   /// See also [getResponseUseCase].
   GetResponseUseCaseProvider call(
-    String message,
+    List<ChatEntry> entries,
   ) {
     return GetResponseUseCaseProvider(
-      message,
+      entries,
     );
   }
 
@@ -55,7 +55,7 @@ class GetResponseUseCaseFamily extends Family<AsyncValue<ChatEntry>> {
     covariant GetResponseUseCaseProvider provider,
   ) {
     return call(
-      provider.message,
+      provider.entries,
     );
   }
 
@@ -78,11 +78,11 @@ class GetResponseUseCaseFamily extends Family<AsyncValue<ChatEntry>> {
 class GetResponseUseCaseProvider extends AutoDisposeFutureProvider<ChatEntry> {
   /// See also [getResponseUseCase].
   GetResponseUseCaseProvider(
-    this.message,
+    this.entries,
   ) : super.internal(
           (ref) => getResponseUseCase(
             ref,
-            message,
+            entries,
           ),
           from: getResponseUseCaseProvider,
           name: r'getResponseUseCaseProvider',
@@ -95,17 +95,17 @@ class GetResponseUseCaseProvider extends AutoDisposeFutureProvider<ChatEntry> {
               GetResponseUseCaseFamily._allTransitiveDependencies,
         );
 
-  final String message;
+  final List<ChatEntry> entries;
 
   @override
   bool operator ==(Object other) {
-    return other is GetResponseUseCaseProvider && other.message == message;
+    return other is GetResponseUseCaseProvider && other.entries == entries;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, message.hashCode);
+    hash = _SystemHash.combine(hash, entries.hashCode);
 
     return _SystemHash.finish(hash);
   }

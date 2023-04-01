@@ -13,19 +13,20 @@ class ChatList extends _$ChatList {
   List<ChatEntry> build() => [];
 
   addBubble(ChatEntry newEntry) async {
+    if (newEntry.content.isEmpty) return;
     if (newEntry.origin == ChatOrigem.user) {
-      _getAnswer(newEntry.content);
+      _getAnswer(newEntry);
     } else {
       ref.read(textToSpeech).speak(newEntry.content);
     }
     state = [newEntry, ...state];
   }
 
-  _getAnswer(String question) async {
+  _getAnswer(ChatEntry question) async {
     ref.read(chatLoadingProvider.notifier).change(true);
     try {
-      final answer =
-          await ref.read(getResponseUseCaseProvider(question).future);
+      final answer = await ref
+          .read(getResponseUseCaseProvider([...state, question]).future);
       addBubble(answer);
       ref.read(chatLoadingProvider.notifier).change(false);
     } on DioError catch (e) {

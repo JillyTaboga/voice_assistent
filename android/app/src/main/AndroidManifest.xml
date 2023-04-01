@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jilly.voice_assistent">
    <application
-        android:label="Assistente de voz"
+        android:label="ChatGpt de voz"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

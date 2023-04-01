@@ -1,22 +1,23 @@
 import 'package:dio/dio.dart';
 
+import '../../domain/entities/chat_entry.dart';
 import 'chat_api.dart';
 
 class ChatGptApi implements ChatApi {
   final _client = Dio();
 
   @override
-  Future<String> getResponse(String question) async {
+  Future<String> getResponse(List<ChatEntry> entries) async {
     final response = await _client.post(
       'https://api.openai.com/v1/chat/completions',
       data: {
         'model': 'gpt-3.5-turbo',
-        'messages': [
-          {
-            'role': 'user',
-            'content': question,
-          },
-        ],
+        'messages': entries
+            .map((e) => {
+                  'role': e.origin == ChatOrigem.user ? 'user' : 'assistant',
+                  'content': e.content,
+                })
+            .toList(),
       },
       options: Options(
         headers: {
