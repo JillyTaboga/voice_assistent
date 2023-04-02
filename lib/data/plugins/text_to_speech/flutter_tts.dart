@@ -14,4 +14,9 @@ class FlutterTts implements TextToSpeech {
   Future<void> speak(String text) async {
     await _speaker.speak(text);
   }
+
+  @override
+  void stop() {
+    _speaker.stop();
+  }
 }

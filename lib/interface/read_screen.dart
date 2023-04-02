@@ -10,6 +10,7 @@ class SpeechReadScreen extends ConsumerWidget {
   const SpeechReadScreen({super.key});
 
   onStartRecording(WidgetRef ref) async {
+    ref.read(textToSpeech).stop();
     ref.read(speechToText).startListen(
       ref.read(textReadedProviderProvider.notifier).setText,
       () {
